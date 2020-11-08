@@ -31,7 +31,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -71,20 +70,34 @@ public class DriverControl extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            double pos = robot.leftDrive.getCurrentPosition();
-            telemetry.addData("pos", pos);
+//            double pos = robot.leftDrive.getCurrentPosition();
+            //telemetry.addData("pos", pos);
+            //robotMotion(robot);
 
-            // moves the robot
-            robotMotion(robot);
+            if (gamepad1.a) {
+                // robot vision
+                robotVision(robot);
 
-            // robot vision
-            robotVision(robot);
+            } else {
+                // moves the robot
+//                telemetry.addData("right joy", gamepad1.right_stick_x);
+//                telemetry.addData("a pressed", gamepad1.a);
+                telemetry.addData("left", robot.leftDrive.getCurrentPosition());
+                telemetry.addData("right", robot.rightDrive.getCurrentPosition());
+                telemetry.addData("left front", robot.leftFrontDrive.getCurrentPosition());
+                telemetry.addData("right front", robot.rightFrontDrive.getCurrentPosition());
+                telemetry.update();
+                robotMotion(robot);
+            }
+
+
+
 
             idle();
 
             // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.update();
+            //telemetry.addData("Status", "Run Time: " + runtime.toString());
+            //telemetry.update();
         }
     }
 
@@ -97,7 +110,7 @@ public class DriverControl extends LinearOpMode {
         boolean targetVisible = false;
         for (VuforiaTrackable trackable : robot.allTrackables) {
             if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
-                telemetry.addData("Visible Target", trackable.getName());
+                //telemetry.addData("Visible Target", trackable.getName());
                 targetVisible = true;
 
                 // getUpdatedRobotLocation() will return null if no new information is available since
@@ -111,19 +124,46 @@ public class DriverControl extends LinearOpMode {
         }
 
         // Provide feedback as to where the robot is located (if we know).
-        if (targetVisible) {
+        if ((targetVisible) && (lastLocation != null))  {
             // express position (translation) of robot in inches.
+
             VectorF translation = lastLocation.getTranslation();
             telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
                     translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
 
+            float x = translation.get(0) / mmPerInch;
+            float y = translation.get(1) / mmPerInch;
+            float z = translation.get(2) / mmPerInch;
+
+            float xTarget = 10;
+            float yTarget = -10;
+            float xd = xTarget-x;
+            float yd = yTarget-y;
+            double distance = Math.sqrt((xd*xd) + (yd*yd));
+            telemetry.addData("distance",distance);
+
+            float power = (float) 0.0;
+            if (Math.abs(x - xTarget) > 6) {
+                // move robot closer
+                if (x > xTarget) {
+                    // move backwared
+                    power = (float) -0.5;
+                } else {
+                    // mover forward
+                    power = (float) 0.5;
+                }
+
+            }
+            robot.setPower(power);
+
             // express the rotation of the robot in degrees.
             Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
             telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
+            telemetry.update();
         }
-        else {
-            telemetry.addData("Visible Target", "none");
-        }
+//        else {
+//            telemetry.addData("Visible Target", "none");
+//        }
     }
 
     // function for moving the robot
