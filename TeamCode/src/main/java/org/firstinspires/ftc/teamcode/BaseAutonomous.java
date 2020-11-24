@@ -50,7 +50,7 @@ public class BaseAutonomous extends LinearOpMode {
 
     // Constants used for calculating encoder distance from linear distance
     //static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
-    static final double     COUNTS_PER_MOTOR_REV    = 795 ;    // our motor
+    static final double     COUNTS_PER_MOTOR_REV    = 28*40 ;    // our motor
 
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
@@ -320,10 +320,10 @@ public class BaseAutonomous extends LinearOpMode {
             // have we spun far enough yet?
             if (yAxisAngle >= toAngle) turning = false;
 
-            telemetry.addData("yAxis", yAxisAngle);
-            telemetry.addData("turning:", turning);
-            telemetry.addData("pPower", proportionalPower);
-            telemetry.update();
+//            telemetry.addData("yAxis", yAxisAngle);
+//            telemetry.addData("turning:", turning);
+//            telemetry.addData("pPower", proportionalPower);
+//            telemetry.update();
 
             if (turning) {
                 // spin left
@@ -365,10 +365,10 @@ public class BaseAutonomous extends LinearOpMode {
             // have we spun enough yet?
             if (yAxisAngle <= toAngle) turning = false;
 
-            telemetry.addData("yAxis", yAxisAngle);
-            telemetry.addData("pPower", proportionalPower);
-            telemetry.addData("turning:", turning);
-            telemetry.update();
+//            telemetry.addData("yAxis", yAxisAngle);
+//            telemetry.addData("pPower", proportionalPower);
+//            telemetry.addData("turning:", turning);
+//            telemetry.update();
 
             if (turning) {
                 // spin right
