@@ -39,6 +39,9 @@ import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+
+import java.util.List;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
@@ -51,6 +54,11 @@ public class DriverControl extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
 
+    private final int GOTO_DONE = 0;
+    private final int GOTO_ALIGN1 = 1;
+    private final int GOTO_MOVEX = 2;
+    private final int GOTO_MOVEY = 3;
+    private final int GOTO_ALIGN2 = 4;
 
     @Override
     public void runOpMode() {
@@ -68,6 +76,8 @@ public class DriverControl extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
+        int goToState = GOTO_DONE;
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 //            double pos = robot.leftDrive.getCurrentPosition();
@@ -77,19 +87,16 @@ public class DriverControl extends LinearOpMode {
             if (gamepad1.a) {
                 // robot vision
                 robotVision(robot);
+                //goToState = goToTarget(robot, goToState);
 
             } else {
                 // moves the robot
 //                telemetry.addData("right joy", gamepad1.right_stick_x);
 //                telemetry.addData("a pressed", gamepad1.a);
-                telemetry.addData("left", robot.leftDrive.getCurrentPosition());
-                telemetry.addData("right", robot.rightDrive.getCurrentPosition());
-                telemetry.addData("left front", robot.leftFrontDrive.getCurrentPosition());
-                telemetry.addData("right front", robot.rightFrontDrive.getCurrentPosition());
-                telemetry.update();
                 robotMotion(robot);
-            }
 
+                goToState = GOTO_DONE;
+            }
 
 
 
@@ -122,6 +129,18 @@ public class DriverControl extends LinearOpMode {
                 break;
             }
         }
+         //If we dont know where we are bail
+
+         //Check the State
+        //The states are align, X movement, Y motion, Last alignment
+        //If state is align check gyro sensor
+        //If not pointed straight turn entill we are
+        //If pointed straight change state to "X Movement"
+
+        //If "X Movement" check the distance from target
+        //If distance from target is greater than a talerance move
+        //If close enough to target transion to "Y Movement"
+
 
         // Provide feedback as to where the robot is located (if we know).
         if ((targetVisible) && (lastLocation != null))  {
@@ -208,5 +227,85 @@ public class DriverControl extends LinearOpMode {
             robot.setPower(leftPower, rightPower);
         }
 
+    }
+
+    public int goToTarget(Robot2020 robot, int state) {
+
+        // how close is close enough?
+        float closeEnoughInches = (float) 6.0;
+        float closeEnoughXInches = (float) 6.0;
+        float closeEnoughYInches = (float) 6.0;
+        float closeEnoughDegrees = (float) 1.0;
+
+        // we are here
+        RobotLocation l = robot.getRobotLocation();
+
+        // target is here
+        RobotLocation target = new RobotLocation();
+        target.x = (float) 0.0;
+        target.y = (float) 0.0;
+        target.roll = (float) 0.0;
+
+        // state transitions
+        switch (state) {
+            case GOTO_DONE:
+                // if we are close enough, don't do anything
+                // otherwise, start the sequence
+                if ((l.distance(target) > closeEnoughInches) | (Math.abs(l.roll) > closeEnoughDegrees)) {
+                    state = GOTO_ALIGN1;
+                }
+                break;
+            case GOTO_ALIGN1:
+                // if we aren't pointed correctly, rotate, otherwise
+                // we can move in the x - direction
+                // TODO: use the robot gyro instead of vuforia?
+                if (Math.abs(l.roll - target.roll) > closeEnoughDegrees) {
+                    // rotate to target angle
+                } else {
+                    // we are close enough, so move in the x direction
+                    state = GOTO_MOVEX;
+                }
+                break;
+            case GOTO_MOVEX:
+                if (Math.abs(l.x - target.x) > closeEnoughXInches) {
+                    if (l.x > target.x) {
+                        // move backwards
+                    } else {
+                        // move forwards
+                    }
+                } else {
+                    // move on to moving in the y direction
+                    state = GOTO_MOVEY;
+                }
+                break;
+            case GOTO_MOVEY:
+                if (Math.abs(l.y - target.y) > closeEnoughYInches) {
+                    if (l.y > target.y) {
+                        // move left
+                    } else {
+                        // move right
+                    }
+                } else {
+                    // move on to last align
+                    state = GOTO_ALIGN2;
+                }
+                break;
+
+            case GOTO_ALIGN2:
+                // if we aren't pointed correctly, rotate, otherwise
+                // we can move in the x - direction
+                // TODO: use the robot gyro instead of vuforia?
+                if (Math.abs(l.roll - target.roll) > closeEnoughDegrees) {
+                    // rotate to target angle
+                } else {
+                    // we are close enough, so be done
+                    state = GOTO_DONE;
+                }
+                break;
+            default:
+                break;
+
+        }
+        return state;
     }
 }
