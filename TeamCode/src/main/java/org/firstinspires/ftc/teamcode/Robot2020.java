@@ -40,6 +40,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -48,6 +49,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,6 +110,16 @@ public class Robot2020
     // Class Members
     private OpenGLMatrix lastLocation = null;
     private VuforiaLocalizer vuforia = null;
+
+    /**
+     * {@link #tfod} is the variable we will use to store our instance of the TensorFlow Object
+     * Detection engine.
+     */
+    public TFObjectDetector tfod;
+
+    private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
+    private static final String LABEL_FIRST_ELEMENT = "Quad";
+    private static final String LABEL_SECOND_ELEMENT = "Single";
 
     /**
      * This is the webcam we are to use. As with other hardware devices such as motors and
@@ -172,6 +184,7 @@ public class Robot2020
 
         // *** initialize vuforia image stuff
         initWebcam(ahwMap);
+        initTfod(ahwMap);
     }
 
     public void initWebcam(HardwareMap ahwMap){
@@ -317,6 +330,29 @@ public class Robot2020
         targetsUltimateGoal.activate();
     }
 
+    private void initTfod(HardwareMap ahwMap) {
+        int tfodMonitorViewId = ahwMap.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", ahwMap.appContext.getPackageName());
+        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+        tfodParameters.minResultConfidence = 0.8f;
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
+
+        if (tfod != null) {
+            tfod.activate();
+
+            // The TensorFlow software will scale the input images from the camera to a lower resolution.
+            // This can result in lower detection accuracy at longer distances (> 55cm or 22").
+            // If your target is at distance greater than 50 cm (20") you can adjust the magnification value
+            // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
+            // should be set to the value of the images used to create the TensorFlow Object Detection model
+            // (typically 1.78 or 16/9).
+
+            // Uncomment the following line if you want to adjust the magnification and/or the aspect ratio of the input images.
+            //tfod.setZoom(2.5, 1.78);
+        }
+    }
+
     // sets power to all chassis motors
     public void setPower(double power){
         leftDrive.setPower(power);
@@ -386,6 +422,46 @@ public class Robot2020
         setPower(-.2*direction);
         //sleep(10);
         setPower(0);
+    }
+
+    public RobotLocation getRobotLocation() {
+        OpenGLMatrix lastLocation = getLastLocation();
+        RobotLocation loc = new RobotLocation();
+        VectorF translation = lastLocation.getTranslation();
+        float mmPerInch        = 25.4f;
+        loc.x = translation.get(0) / mmPerInch;
+        loc.y = translation.get(1) / mmPerInch;
+        loc.z = translation.get(2) / mmPerInch;
+
+        Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
+//        telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
+        loc.roll = rotation.firstAngle;
+        loc.pitch = rotation.secondAngle;
+        loc.heading = rotation.thirdAngle;
+        return loc;
+    }
+
+    public OpenGLMatrix getLastLocation() {
+        OpenGLMatrix lastLocation = null;
+        //float mmPerInch        = 25.4f;
+
+        // check all the trackable targets to see which one (if any) is visible.
+        boolean targetVisible = false;
+        for (VuforiaTrackable trackable : this.allTrackables) {
+            if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
+                //telemetry.addData("Visible Target", trackable.getName());
+                targetVisible = true;
+
+                // getUpdatedRobotLocation() will return null if no new information is available since
+                // the last time that call was made, or if the trackable is not currently visible.
+                OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedRobotLocation();
+                if (robotLocationTransform != null) {
+                    lastLocation = robotLocationTransform;
+                }
+                break;
+            }
+        }
+        return lastLocation;
     }
 }
 
