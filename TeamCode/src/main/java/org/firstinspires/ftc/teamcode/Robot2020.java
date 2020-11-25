@@ -75,6 +75,10 @@ public class Robot2020
     public DcMotor leftFrontDrive   = null;
     public DcMotor rightFrontDrive  = null;
 
+
+    // these are the servos for the claw
+    public Servo wobbleServo    = null;
+
     // these are for the gamepads, so shouldn't be in here?
     float triggerDownR = (float) 1.0;
     float gearTriggerDown = (float) 0.7;
@@ -153,6 +157,9 @@ public class Robot2020
         rightDrive = hwMap.get(DcMotor.class, "right_drive");
         leftFrontDrive  = hwMap.get(DcMotor.class, "left_front_drive");
         rightFrontDrive = hwMap.get(DcMotor.class, "right_front_drive");
+
+        wobbleServo = hwMap.get(Servo.class, "wobble_servo");
+
         // The drive motors on each side are mirrors of one another.  So if
         // we want them to run in the same direction given the same power, one
         // side needs to be defined to go in the direction opposite of the other
