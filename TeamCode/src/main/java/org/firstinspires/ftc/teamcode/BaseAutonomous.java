@@ -36,6 +36,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+
+import java.util.List;
 
 // This is the parent class for all autonomouse classes.  It contains all
 // the basic functions we need for navigating using encoders and the IMU
@@ -90,6 +93,12 @@ public class BaseAutonomous extends LinearOpMode {
                           robot.leftDrive.getCurrentPosition(),
                           robot.rightDrive.getCurrentPosition());
         telemetry.update();
+
+        // open servo
+        robot.wobbleServo.setPosition(1.0);
+
+        sleep(1000);
+        robot.wobbleServo.setPosition(.2);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -388,4 +397,31 @@ public class BaseAutonomous extends LinearOpMode {
         }
     }
 
+    public int countRings(Robot2020 robot) {
+
+        int numRings = 0;
+        if (robot.tfod != null) {
+            // getUpdatedRecognitions() will return null if no new information is available since
+            // the last time that call was made.
+            List<Recognition> updatedRecognitions = robot.tfod.getUpdatedRecognitions();
+            if (updatedRecognitions != null) {
+                telemetry.addData("# Object Detected", updatedRecognitions.size());
+                // step through the list of recognitions and display boundary info.
+                int i = 0;
+                for (Recognition recognition : updatedRecognitions) {
+                    telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
+                    telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
+                            recognition.getLeft(), recognition.getTop());
+                    telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
+                            recognition.getRight(), recognition.getBottom());
+                    String label = recognition.getLabel();
+                    if (label == "Single") numRings = 1;
+                    if (label == "Quad") numRings = 4;
+                }
+                telemetry.update();
+            }
+
+        }
+        return numRings;
+    }
 }
