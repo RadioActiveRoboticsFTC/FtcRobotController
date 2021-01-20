@@ -78,6 +78,10 @@ public class DriverControl extends LinearOpMode {
 
         int goToState = GOTO_DONE;
 
+        // this is so that the motor will have already started up when we start the match so that
+        // in the match we do not have to wait for it to start up
+        robot.shooterMotor.setPower(0.0);
+        
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 //            double pos = robot.leftDrive.getCurrentPosition();
@@ -97,6 +101,29 @@ public class DriverControl extends LinearOpMode {
 
                 goToState = GOTO_DONE;
             }
+
+            //countRings(robot);
+
+            if (gamepad2.a) {
+                // shoot the rings!
+//                robot.shootRing();
+
+                robot.wallServo.setPosition(0.5);
+                 sleep(500);
+//        wait(500);
+                robot.pusherServo.setPosition(0.65  );
+            } else {
+                // put shooter stuff back in oringinal position
+//                robot.resetShooter();
+                robot.wallServo.setPosition(0.0);
+                sleep(500);
+//        wait(500);
+                robot.pusherServo.setPosition(0.85);
+            }
+            // this lefts us aim our shooter with the up/down motion
+
+            double shooterAnglePower = 0.3 * gamepad2.left_stick_y;
+            robot.shooterAngleMotor.setPower(shooterAnglePower);
 
 
 
@@ -307,5 +334,33 @@ public class DriverControl extends LinearOpMode {
 
         }
         return state;
+    }
+
+    public int countRings(Robot2020 robot) {
+
+        int numRings = 0;
+        if (robot.tfod != null) {
+            // getUpdatedRecognitions() will return null if no new information is available since
+            // the last time that call was made.
+            List<Recognition> updatedRecognitions = robot.tfod.getUpdatedRecognitions();
+            if (updatedRecognitions != null) {
+                telemetry.addData("# Object Detected", updatedRecognitions.size());
+                // step through the list of recognitions and display boundary info.
+                int i = 0;
+                for (Recognition recognition : updatedRecognitions) {
+                    telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
+                    telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
+                            recognition.getLeft(), recognition.getTop());
+                    telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
+                            recognition.getRight(), recognition.getBottom());
+                    String label = recognition.getLabel();
+                    if (label == "Single") numRings = 1;
+                    if (label == "Quad") numRings = 4;
+                }
+                telemetry.update();
+            }
+
+        }
+        return numRings;
     }
 }

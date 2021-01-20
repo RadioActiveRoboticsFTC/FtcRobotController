@@ -54,6 +54,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Thread.sleep;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
@@ -75,9 +76,13 @@ public class Robot2020
     public DcMotor leftFrontDrive   = null;
     public DcMotor rightFrontDrive  = null;
 
+    public DcMotor shooterAngleMotor  = null;
+    public DcMotor shooterMotor   = null;
 
-    // these are the servos for the claw
+    // these are the servos
     public Servo wobbleServo    = null;
+    public Servo wallServo      = null;
+    public Servo pusherServo    = null;
 
     // these are for the gamepads, so shouldn't be in here?
     float triggerDownR = (float) 1.0;
@@ -158,7 +163,12 @@ public class Robot2020
         leftFrontDrive  = hwMap.get(DcMotor.class, "left_front_drive");
         rightFrontDrive = hwMap.get(DcMotor.class, "right_front_drive");
 
-        wobbleServo = hwMap.get(Servo.class, "wobble_servo");
+        shooterAngleMotor = hwMap.get(DcMotor.class, "shooter_angle_motor");
+        shooterMotor = hwMap.get(DcMotor.class, "shooter_motor");
+
+//        wobbleServo = hwMap.get(Servo.class, "wobble_servo");
+        pusherServo = hwMap.get(Servo.class, "pusher_servo");
+        wallServo = hwMap.get(Servo.class, "wall_servo");
 
         // The drive motors on each side are mirrors of one another.  So if
         // we want them to run in the same direction given the same power, one
@@ -469,6 +479,20 @@ public class Robot2020
             }
         }
         return lastLocation;
+    }
+
+    public void shootRing()
+    {
+        wallServo.setPosition(0.5);
+//        sleep(500);
+//        wait(500);
+        pusherServo.setPosition(0);
+    }
+    public void resetShooter() {
+        wallServo.setPosition(0);
+//        sleep(500);
+//        sleep(500);
+        pusherServo.setPosition(0);
     }
 }
 
