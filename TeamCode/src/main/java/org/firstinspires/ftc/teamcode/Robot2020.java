@@ -34,6 +34,7 @@ import android.sax.StartElementListener;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -78,6 +79,9 @@ public class Robot2020
 
     public DcMotor shooterAngleMotor  = null;
     public DcMotor shooterMotor   = null;
+
+    public DcMotor upperIntakeMotor  = null;
+    public DcMotor lowerIntakeMotor   = null;
 
     // these are the servos
     public Servo wobbleServo    = null;
@@ -165,6 +169,9 @@ public class Robot2020
 
         shooterAngleMotor = hwMap.get(DcMotor.class, "shooter_angle_motor");
         shooterMotor = hwMap.get(DcMotor.class, "shooter_motor");
+
+        upperIntakeMotor = hwMap.get(DcMotor.class, "upper_intake_motor");
+        lowerIntakeMotor = hwMap.get(DcMotor.class, "lower_intake_motor");
 
 //        wobbleServo = hwMap.get(Servo.class, "wobble_servo");
         pusherServo = hwMap.get(Servo.class, "pusher_servo");
