@@ -103,12 +103,16 @@ public class DriverControl extends LinearOpMode {
             }
 
             //countRings(robot);
+//            robot.shooterMotor.setPower(gamepad2.right_stick_y*0.5);
+            double shootPower = gamepad2.right_stick_y*0.5;
+            robot.shooterMotor.setPower(shootPower);
 
-            if (gamepad2.a) {
+            if (gamepad2.right_bumper) {
                 // shoot the rings!
 //                robot.shootRing();
 
-                robot.wallServo.setPosition(0.5);
+//                robot.wallServo.setPosition(0.5);
+                robot.wallServo.setPosition(0.15);
                  sleep(500);
 //        wait(500);
                 robot.pusherServo.setPosition(0.65  );
@@ -122,6 +126,14 @@ public class DriverControl extends LinearOpMode {
             }
             // this lefts us aim our shooter with the up/down motion
 
+            if(gamepad2.left_bumper){
+                robot.lowerIntakeMotor.setPower(1);
+                robot.upperIntakeMotor.setPower(1);
+            }
+            else{
+                robot.lowerIntakeMotor.setPower(0);
+                robot.upperIntakeMotor.setPower(0);
+            }
             double shooterAnglePower = 0.3 * gamepad2.left_stick_y;
             robot.shooterAngleMotor.setPower(shooterAnglePower);
 
@@ -131,7 +143,9 @@ public class DriverControl extends LinearOpMode {
 
             // Show the elapsed game time and wheel power.
             //telemetry.addData("Status", "Run Time: " + runtime.toString());
-            //telemetry.update();
+            telemetry.addData("shoot power", shootPower);
+
+            telemetry.update();
         }
     }
 
