@@ -109,6 +109,21 @@ public class BaseAutonomous extends LinearOpMode {
 
     }
 
+    public void shootRing() {
+
+            // shoot the rings!
+            robot.wallServo.setPosition(0.15);
+            sleep(500);
+            robot.pusherServo.setPosition(0.65  );
+            sleep(1000);
+            // put shooter stuff back in oringinal position
+
+            robot.wallServo.setPosition(0.0);
+            sleep(500);
+
+            robot.pusherServo.setPosition(0.85);
+
+    }
     // drive straight a certain distance using encoders and IMU
     public void driveStraight(double power, double inches, double timoutSecs) {
         encoderDrive(power, inches, inches, timoutSecs);
