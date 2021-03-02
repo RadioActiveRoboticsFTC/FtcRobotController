@@ -173,7 +173,7 @@ public class Robot2020
         upperIntakeMotor = hwMap.get(DcMotor.class, "upper_intake_motor");
         lowerIntakeMotor = hwMap.get(DcMotor.class, "lower_intake_motor");
 
-//        wobbleServo = hwMap.get(Servo.class, "wobble_servo");
+        wobbleServo = hwMap.get(Servo.class, "wobble_servo");
         pusherServo = hwMap.get(Servo.class, "pusher_servo");
         wallServo = hwMap.get(Servo.class, "wall_servo");
 
