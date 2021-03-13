@@ -59,6 +59,25 @@ public class Autonomous3 extends BaseAutonomous {
         // 3 possible paths:
 
         if (numRings == 0) {
+
+            // don't got straight so we are in the middle of target B
+            spinLeftP(5.0, 0.25);
+//            driveStraight(0.8, 5.5*12 , 20.0);
+
+            // let's instead go up to the shoot line, shoot, then continue
+            robot.shooterMotor.setPower(0.5);
+            driveStraight(0.75, 3*12, 20);
+            spinRightP(-20, 0.25);
+            shootRing();
+            robot.shooterMotor.setPower(0);
+            spinRightP(-80, 0.25);
+            driveStraight(0.5, 3.5*12, 20);
+            robot.wobbleServo.setPosition(1.0);
+            sleep(500);
+            robot.setPower(-0.25,-0.5);
+            sleep(2000);
+
+            // turn backwards to park on line
             // A:  go straight ? feet
 //            spinLeftP(10, 0.25);
 //            driveStraight(0.5, 4*12 + 6, 15.0);
@@ -121,12 +140,16 @@ public class Autonomous3 extends BaseAutonomous {
 //            encoderDrive(-.3, inches, inches, 10, false);
 
             spinLeftP(0.0, 0.25);
-            driveStraight(0.8, 7*12, 20.0);
+            driveStraight(0.8, 7.5*12, 20.0);
             spinRightP(-80, 0.75);
-            driveStraight(0.75, 2.75*12, 20.0);
+            driveStraight(0.75, 1.75*12, 20.0);
+            spinRightP(-180, 0.75);
+
             // drop the wobble
             robot.wobbleServo.setPosition(1.0);
+            driveStraight(0.75, 3*12, 20.0);
         }
+
 
     }
 
