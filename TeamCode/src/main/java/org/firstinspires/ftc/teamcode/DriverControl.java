@@ -81,12 +81,13 @@ public class DriverControl extends LinearOpMode {
         // this is so that the motor will have already started up when we start the match so that
         // in the match we do not have to wait for it to start up
         robot.shooterMotor.setPower(0.0);
-        
+
+        robot.releaseServo.setPosition(0);
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 //            double pos = robot.leftDrive.getCurrentPosition();
             //telemetry.addData("pos", pos);
-            //robotMotion(robot);
+//            robotMotion(robot);
 
             if (gamepad1.a) {
                 // robot vision
@@ -99,11 +100,12 @@ public class DriverControl extends LinearOpMode {
 //                telemetry.addData("a pressed", gamepad1.a);
                 robotMotion(robot);
 
+
                 goToState = GOTO_DONE;
             }
 
             //countRings(robot);
-//            robot.shooterMotor.setPower(gamepad2.right_stick_y*0.5);
+            robot.shooterMotor.setPower(gamepad2.right_stick_y*0.5);
             double shootPower = gamepad2.right_stick_y*0.5;
             robot.shooterMotor.setPower(shootPower);
 
@@ -137,15 +139,25 @@ public class DriverControl extends LinearOpMode {
             double shooterAnglePower = 0.3 * gamepad2.left_stick_y;
             robot.shooterAngleMotor.setPower(shooterAnglePower);
 
+            if (gamepad1.y) {
+                robot.wobbleServo.setPosition(0.25);
+            } else {
+                robot.wobbleServo.setPosition(0.50);
+            }
 
-
+            if (gamepad2.b) {
+                robot.releaseServo.setPosition(0);
+            }
+            else{
+                robot.releaseServo.setPosition(0.25);
+            }
             idle();
 
-            // Show the elapsed game time and wheel power.
-            //telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("shoot power", shootPower);
-
-            telemetry.update();
+//             Show the elapsed game time and wheel power.
+//            telemetry.addData("Status", "Run Time: " + runtime.toString());
+//            telemetry.addData("shoot power", shootPower);
+//
+//            telemetry.update();
         }
     }
 
@@ -158,7 +170,7 @@ public class DriverControl extends LinearOpMode {
         boolean targetVisible = false;
         for (VuforiaTrackable trackable : robot.allTrackables) {
             if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
-                //telemetry.addData("Visible Target", trackable.getName());
+                telemetry.addData("Visible Target", trackable.getName());
                 targetVisible = true;
 
                 // getUpdatedRobotLocation() will return null if no new information is available since
@@ -195,12 +207,24 @@ public class DriverControl extends LinearOpMode {
             float y = translation.get(1) / mmPerInch;
             float z = translation.get(2) / mmPerInch;
 
-            float xTarget = 10;
-            float yTarget = -10;
+            float halfField = 72f; // inches
+            float quadField = (float) (halfField/2.0);
+
+            float xTarget = halfField;
+            float yTarget = -quadField;
             float xd = xTarget-x;
             float yd = yTarget-y;
             double distance = Math.sqrt((xd*xd) + (yd*yd));
             telemetry.addData("distance",distance);
+            float xy = yd / xd;
+
+            double angle1 = Math.tanh(xy);
+            double angle = 90.0 - angle1;
+
+            double currentAngle = robot.getYAxisAngle();
+
+            telemetry.addData("turn to: ", angle);
+            telemetry.addData("currentAngle:", currentAngle);
 
             float power = (float) 0.0;
             if (Math.abs(x - xTarget) > 6) {
@@ -214,7 +238,7 @@ public class DriverControl extends LinearOpMode {
                 }
 
             }
-            robot.setPower(power);
+//            robot.setPower(power);
 
             // express the rotation of the robot in degrees.
             Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
@@ -268,6 +292,12 @@ public class DriverControl extends LinearOpMode {
             robot.setPower(leftPower, rightPower);
         }
 
+//        telemetry.addData("LeftStickX", leftStickX);
+//        telemetry.addData("LeftStickY", leftStickY);
+//        telemetry.addData("rightStickY", rightStickX);
+//        telemetry.addData("LeftPower:", leftPower);
+//        telemetry.addData("RightPower:", rightPower);
+//        telemetry.update();
     }
 
     public int goToTarget(Robot2020 robot, int state) {
