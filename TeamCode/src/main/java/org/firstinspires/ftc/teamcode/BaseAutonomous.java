@@ -98,8 +98,8 @@ public class BaseAutonomous extends LinearOpMode {
         robot.wobbleServo.setPosition(1.0);
 
         sleep(1000);
-        robot.wobbleServo.setPosition(.2);
-
+//        robot.wobbleServo.setPosition(.2);
+        robot.wobbleServo.setPosition(0);
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
