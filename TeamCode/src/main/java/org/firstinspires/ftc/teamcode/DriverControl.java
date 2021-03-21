@@ -82,7 +82,13 @@ public class DriverControl extends LinearOpMode {
         // in the match we do not have to wait for it to start up
         robot.shooterMotor.setPower(0.0);
 
-        robot.releaseServo.setPosition(0);
+        // TBF: should we do this?
+//        robot.releaseServo.setPosition(0);
+
+        // variables for catching button transition for initing IMU
+        boolean curIMUBtnState = false;
+        boolean prevIMUBtnState = true;
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 //            double pos = robot.leftDrive.getCurrentPosition();
@@ -104,9 +110,33 @@ public class DriverControl extends LinearOpMode {
                 goToState = GOTO_DONE;
             }
 
+            // initialize IMU?
+            curIMUBtnState = gamepad2.x;
+            // init IMU just once for every time x btn is pressed
+            if ((curIMUBtnState) && (curIMUBtnState != prevIMUBtnState)) {
+                telemetry.addData("Initing IMU ...", "");
+                robot.initIMU();
+            }
+            prevIMUBtnState = curIMUBtnState;
+
+            // automatic aiminng!
+            double targetAngle = 5.0;
+            if (gamepad1.right_bumper) {
+                telemetry.addLine("Auto Aiming!");
+                telemetry.update();
+                double curAngle = robot.getYAxisAngle();
+                if (curAngle > targetAngle)
+                    spinRightP(robot, targetAngle, 0.25);
+                else
+                    spinLeftP(robot, targetAngle, 0.25);
+            }
+
             //countRings(robot);
-            robot.shooterMotor.setPower(gamepad2.right_stick_y*0.5);
-            double shootPower = gamepad2.right_stick_y*0.5;
+//            robot.shooterMotor.setPower(gamepad2.right_stick_y*0.5);
+//            double shootPower = gamepad2.right_stick_y*0.5;
+            double shootPower = 0.0;
+            if (gamepad2.a)
+                shootPower = 0.5;
             robot.shooterMotor.setPower(shootPower);
 
             if (gamepad2.right_bumper) {
@@ -221,10 +251,8 @@ public class DriverControl extends LinearOpMode {
             double angle1 = Math.tanh(xy);
             double angle = 90.0 - angle1;
 
-            double currentAngle = robot.getYAxisAngle();
-
             telemetry.addData("turn to: ", angle);
-            telemetry.addData("currentAngle:", currentAngle);
+
 
             float power = (float) 0.0;
             if (Math.abs(x - xTarget) > 6) {
@@ -239,6 +267,10 @@ public class DriverControl extends LinearOpMode {
 
             }
 //            robot.setPower(power);
+            double currentAngle = robot.getYAxisAngle();
+
+            telemetry.addData("currentAngle:", currentAngle);
+
 
             // express the rotation of the robot in degrees.
             Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
@@ -287,7 +319,7 @@ public class DriverControl extends LinearOpMode {
         //This decides whether the robot will strafe or
         // drive normally, based of the right trigger (strafeTrigger)
         if (strafeTrigger >= robot.strafeTriggerDown) {
-            robot.setStrafePower(strafePower);
+            robot.setStrafePower(-strafePower);
         } else {
             robot.setPower(leftPower, rightPower);
         }
@@ -297,7 +329,10 @@ public class DriverControl extends LinearOpMode {
 //        telemetry.addData("rightStickY", rightStickX);
 //        telemetry.addData("LeftPower:", leftPower);
 //        telemetry.addData("RightPower:", rightPower);
-//        telemetry.update();
+        double currentAngle = robot.getYAxisAngle();
+
+        telemetry.addData("currentAngle:", currentAngle);
+        telemetry.update();
     }
 
     public int goToTarget(Robot2020 robot, int state) {
@@ -407,4 +442,98 @@ public class DriverControl extends LinearOpMode {
         }
         return numRings;
     }
+
+    // This function is just like spinLeft, but sets the power proportional to the distance
+    // from our target angle; this way we don't have to brake at the end.
+    public void spinLeftP(Robot2020 robot, double toAngle, double power) {
+
+        double yAxisAngle;
+        yAxisAngle = robot.getYAxisAngle();
+
+        // how far are we trying to go?
+        double totalAngularDistance = toAngle-yAxisAngle;
+        boolean turning = true;
+        double prevAngle = robot.getYAxisAngle();
+
+        // Loop and update the dashboard
+        while (opModeIsActive() && turning) {
+            //what angle are we at right now?
+            yAxisAngle = robot.getYAxisAngle();
+
+            // watch for the 180/-180 border!
+            // Recall that forward is 0 degrees, with positive to the left,
+            // negative to the right
+            if (yAxisAngle < 0 && prevAngle > 0) turning = false;
+
+            prevAngle = yAxisAngle;
+
+            // proportional power
+            double percentAngularDistance = (toAngle-yAxisAngle)/totalAngularDistance;
+            double proportionalPower = percentAngularDistance * power;
+            // make sure we never get down to a power of zero, or we
+            // might never finish our turn
+            proportionalPower = Range.clip(proportionalPower, .1, power);
+
+            // have we spun far enough yet?
+            if (yAxisAngle >= toAngle) turning = false;
+
+            telemetry.addData("yAxis", yAxisAngle);
+            telemetry.addData("turning:", turning);
+            telemetry.addData("pPower", proportionalPower);
+            telemetry.update();
+
+            if (turning) {
+                // spin left
+                robot.setPower(-proportionalPower, proportionalPower);
+            }
+        }
+        robot.setPower(0);
+    }
+
+    // This function is just like spinRight, but sets the power proportional to the distance
+    // from our target angle; this way we don't have to brake at the end.
+    // TBF: can we combine this with spinLeftP to make one function?
+    public void spinRightP (Robot2020 robot, double toAngle, double power) {
+
+        // this code turns right
+        double yAxisAngle;
+        yAxisAngle = robot.getYAxisAngle();
+        boolean turning = true;
+        double totalAngularDistance = toAngle-yAxisAngle;
+
+        double prevAngle = robot.getYAxisAngle();
+
+        // Loop and update the dashboard
+        while (opModeIsActive() && turning) {
+            // what angle are we at right now?
+            yAxisAngle = robot.getYAxisAngle();
+
+            // watch for the border at -180/180
+            if (yAxisAngle > 0 && prevAngle < 0) turning = false;
+
+            prevAngle = yAxisAngle;
+
+            // proportional power
+            double percentAngularDistance = (toAngle-yAxisAngle)/totalAngularDistance;
+            double proportionalPower = percentAngularDistance * power;
+            // make sure we never go to a power of zero and never finish our turning
+            proportionalPower = Range.clip(proportionalPower, .1, power);
+
+            // have we spun enough yet?
+            if (yAxisAngle <= toAngle) turning = false;
+
+            telemetry.addData("yAxis", yAxisAngle);
+            telemetry.addData("pPower", proportionalPower);
+            telemetry.addData("turning:", turning);
+            telemetry.update();
+
+            if (turning) {
+                // spin right
+                robot.setPower(proportionalPower, -proportionalPower);
+            }
+        }
+
+        robot.setPower(0);
+    }
+
 }
