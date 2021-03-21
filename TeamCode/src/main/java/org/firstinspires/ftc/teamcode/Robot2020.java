@@ -192,6 +192,15 @@ public class Robot2020
         // Set all motors to zero power
         setPower(0);
 
+        // initialize the IMU!  Where ever the robot is pointed, is now zero!
+        initIMU();
+
+        // *** initialize vuforia image stuff
+        initWebcam(ahwMap);
+        initTfod(ahwMap);
+    }
+
+    public void initIMU() {
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
         // provide positional information.
@@ -209,12 +218,7 @@ public class Robot2020
         // and named "imu".
         imu = hwMap.get(BNO055IMU.class, "imu 1");
         imu.initialize(parameters);
-
-        // *** initialize vuforia image stuff
-        initWebcam(ahwMap);
-        initTfod(ahwMap);
     }
-
     public void initWebcam(HardwareMap ahwMap){
         /*
          * Retrieve the camera we are to use.
