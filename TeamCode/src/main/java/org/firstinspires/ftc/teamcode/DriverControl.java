@@ -110,6 +110,8 @@ public class DriverControl extends LinearOpMode {
                 goToState = GOTO_DONE;
             }
 
+            robotActions(robot);
+
             // initialize IMU?
             curIMUBtnState = gamepad2.x;
             // init IMU just once for every time x btn is pressed
@@ -119,68 +121,11 @@ public class DriverControl extends LinearOpMode {
             }
             prevIMUBtnState = curIMUBtnState;
 
-            // automatic aiminng!
-            double targetAngle = 5.0;
-            if (gamepad1.right_bumper) {
-                telemetry.addLine("Auto Aiming!");
-                telemetry.update();
-                double curAngle = robot.getYAxisAngle();
-                if (curAngle > targetAngle)
-                    spinRightP(robot, targetAngle, 0.25);
-                else
-                    spinLeftP(robot, targetAngle, 0.25);
-            }
+
 
             //countRings(robot);
 //            robot.shooterMotor.setPower(gamepad2.right_stick_y*0.5);
 //            double shootPower = gamepad2.right_stick_y*0.5;
-            double shootPower = 0.0;
-            if (gamepad2.a)
-                shootPower = 0.5;
-            robot.shooterMotor.setPower(shootPower);
-
-            if (gamepad2.right_bumper) {
-                // shoot the rings!
-//                robot.shootRing();
-
-//                robot.wallServo.setPosition(0.5);
-                robot.wallServo.setPosition(0.15);
-                 sleep(500);
-//        wait(500);
-                robot.pusherServo.setPosition(0.65  );
-            } else {
-                // put shooter stuff back in oringinal position
-//                robot.resetShooter();
-                robot.wallServo.setPosition(0.0);
-                sleep(500);
-//        wait(500);
-                robot.pusherServo.setPosition(0.85);
-            }
-            // this lefts us aim our shooter with the up/down motion
-
-            if(gamepad2.left_bumper){
-                robot.lowerIntakeMotor.setPower(1);
-                robot.upperIntakeMotor.setPower(1);
-            }
-            else{
-                robot.lowerIntakeMotor.setPower(0);
-                robot.upperIntakeMotor.setPower(0);
-            }
-            double shooterAnglePower = 0.3 * gamepad2.left_stick_y;
-            robot.shooterAngleMotor.setPower(shooterAnglePower);
-
-            if (gamepad1.y) {
-                robot.wobbleServo.setPosition(0.25);
-            } else {
-                robot.wobbleServo.setPosition(0.50);
-            }
-
-            if (gamepad2.b) {
-                robot.releaseServo.setPosition(0);
-            }
-            else{
-                robot.releaseServo.setPosition(0.25);
-            }
             idle();
 
 //             Show the elapsed game time and wheel power.
@@ -324,6 +269,19 @@ public class DriverControl extends LinearOpMode {
             robot.setPower(leftPower, rightPower);
         }
 
+
+        // automatic aiminng!
+        double targetAngle = 5.0;
+        if (gamepad1.right_bumper) {
+            telemetry.addLine("Auto Aiming!");
+            telemetry.update();
+            double curAngle = robot.getYAxisAngle();
+            if (curAngle > targetAngle)
+                spinRightP(robot, targetAngle, 0.25);
+            else
+                spinLeftP(robot, targetAngle, 0.25);
+        }
+
 //        telemetry.addData("LeftStickX", leftStickX);
 //        telemetry.addData("LeftStickY", leftStickY);
 //        telemetry.addData("rightStickY", rightStickX);
@@ -335,6 +293,56 @@ public class DriverControl extends LinearOpMode {
         telemetry.update();
     }
 
+    public void robotActions(Robot2020 robot) {
+        double shootPower = 0.0;
+        if (gamepad2.a)
+            shootPower = 0.5;
+        robot.shooterMotor.setPower(shootPower);
+
+        if (gamepad2.right_bumper) {
+            // shoot the rings!
+//                robot.shootRing();
+
+//                robot.wallServo.setPosition(0.5);
+            robot.wallServo.setPosition(0.15);
+            sleep(500);
+//        wait(500);
+            robot.pusherServo.setPosition(0.55  );
+        } else {
+            // put shooter stuff back in oringinal position
+//                robot.resetShooter();
+            robot.wallServo.setPosition(0.0);
+            sleep(500);
+//        wait(500);
+            robot.pusherServo.setPosition(0.85);
+        }
+        // this lefts us aim our shooter with the up/down motion
+
+        if(gamepad2.left_bumper){
+            robot.lowerIntakeMotor.setPower(1);
+            robot.upperIntakeMotor.setPower(1);
+        }
+        else{
+            robot.lowerIntakeMotor.setPower(0);
+            robot.upperIntakeMotor.setPower(0);
+        }
+        double shooterAnglePower = 0.3 * gamepad2.left_stick_y;
+        robot.shooterAngleMotor.setPower(shooterAnglePower);
+
+        if (gamepad1.y) {
+            robot.wobbleServo.setPosition(0.25);
+        } else {
+            robot.wobbleServo.setPosition(0.50);
+        }
+
+        if (gamepad2.b) {
+            robot.releaseServo.setPosition(0);
+        }
+        else{
+            robot.releaseServo.setPosition(0.25);
+        }
+
+    }
     public int goToTarget(Robot2020 robot, int state) {
 
         // how close is close enough?
