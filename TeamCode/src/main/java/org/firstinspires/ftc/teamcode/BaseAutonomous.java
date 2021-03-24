@@ -114,7 +114,7 @@ public class BaseAutonomous extends LinearOpMode {
             // shoot the rings!
             robot.wallServo.setPosition(0.15);
             sleep(500);
-            robot.pusherServo.setPosition(0.65  );
+            robot.pusherServo.setPosition(0.55  );
             sleep(1000);
             // put shooter stuff back in oringinal position
 
