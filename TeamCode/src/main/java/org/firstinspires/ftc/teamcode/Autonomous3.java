@@ -41,11 +41,11 @@ public class Autonomous3 extends BaseAutonomous {
         int numRings = 0;
 //       while (opModeIsActive() {
         numRings = countRings(robot);
-        sleep(500);
-        int numRings2 = countRings(robot);
+        //sleep(500);
+        //int numRings2 = countRings(robot);
 //        }
         telemetry.addData("num rings", numRings);
-        telemetry.addData("num rings2", numRings2);
+        //telemetry.addData("num rings2", numRings2);
         telemetry.update();
 
         // all goals share this part of the path
@@ -59,18 +59,19 @@ public class Autonomous3 extends BaseAutonomous {
         // 3 possible paths:
 
         if (numRings == 0) {
-
+            robot.shooterMotor.setPower(0.55);
             // don't got straight so we are in the middle of target B
             spinLeftP(5.0, 0.25);
 //            driveStraight(0.8, 5.5*12 , 20.0);
 
             // let's instead go up to the shoot line, shoot, then continue
-            robot.shooterMotor.setPower(0.5);
-            driveStraight(0.75, 3*12, 20);
-            spinRightP(-20, 0.25);
+
+            driveStraight(0.75, (3*12)-7, 20);
+            spinRightP(-5, 0.25);
             shootRing();
-            robot.shooterMotor.setPower(0);
+            driveStraight(0.75, 7, 20);
             spinRightP(-80, 0.25);
+            robot.shooterMotor.setPower(0);
             driveStraight(0.5, 3.5*12, 20);
             robot.wobbleServo.setPosition(1.0);
             sleep(500);
@@ -87,18 +88,19 @@ public class Autonomous3 extends BaseAutonomous {
         }
 
         if (numRings == 1) {
-
+            robot.shooterMotor.setPower(0.55);
             // don't got straight so we are in the middle of target B
             spinLeftP(5.0, 0.25);
 //            driveStraight(0.8, 5.5*12 , 20.0);
 
             // let's instead go up to the shoot line, shoot, then continue
-            robot.shooterMotor.setPower(0.5);
-            driveStraight(0.75, 3*12, 20);
-            spinRightP(-20, 0.25);
+
+            driveStraight(0.75, (3*12)-7, 20);
+            spinRightP(-5, 0.25);
             shootRing();
-            robot.shooterMotor.setPower(0);
+            driveStraight(0.75, 7, 20);
             spinLeftP(5.0, 0.25);
+            robot.shooterMotor.setPower(0);
             driveStraight(0.75, 2.5*12, 20.0);
 
             spinRightP(-180, 0.75);
@@ -138,9 +140,14 @@ public class Autonomous3 extends BaseAutonomous {
 //            spinRightP(0, 0.25);
 //            float inches = -4*12;
 //            encoderDrive(-.3, inches, inches, 10, false);
-
+            robot.shooterMotor.setPower(.55);
             spinLeftP(0.0, 0.25);
-            driveStraight(0.8, 7.5*12, 20.0);
+            driveStraight(0.75, (3*12)-7, 20);
+            spinRightP(-5, 0.25);
+            shootRing();
+            spinLeftP(0.0, 0.25);
+            robot.shooterMotor.setPower(0.0);
+            driveStraight(0.8, (7.5*12)-(3*12)+5, 20.0);
             spinRightP(-80, 0.75);
             driveStraight(0.75, 1.75*12, 20.0);
             spinRightP(-180, 0.75);
