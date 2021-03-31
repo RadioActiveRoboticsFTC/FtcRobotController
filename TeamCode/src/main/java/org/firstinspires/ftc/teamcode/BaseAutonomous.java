@@ -95,6 +95,7 @@ public class BaseAutonomous extends LinearOpMode {
         telemetry.update();
 
         // open servo
+        // TODO: use a robot function for this
         robot.wobbleServo.setPosition(1.0);
 
         sleep(1000);
@@ -109,7 +110,10 @@ public class BaseAutonomous extends LinearOpMode {
 
     }
 
+    // TODO: comment
     public void shootRing() {
+
+        // TODO: remove old code
 
             // shoot the rings!
 //            robot.wallServo.setPosition(0.15);
@@ -417,6 +421,7 @@ public class BaseAutonomous extends LinearOpMode {
         }
     }
 
+    // TODO: comment
     public int countRings(Robot2020 robot) {
 
         int numRings = 0;
