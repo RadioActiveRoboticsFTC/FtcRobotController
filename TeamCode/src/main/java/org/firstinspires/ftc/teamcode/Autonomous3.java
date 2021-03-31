@@ -6,6 +6,8 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 
 import java.util.List;
 
+// TODO: general comment about what this opmode does
+
 // Directions:
 // put robot directly over left red line, with back to wall
 
@@ -21,6 +23,7 @@ public class Autonomous3 extends BaseAutonomous {
 
         float ts = (float) 15.0;
 
+        // TODO: get rid of old code from last year
         // driving straight this distance parks the robot directly under
         // the sky bridge
 //        driveStraight(0.25, 2*12.0, 15.0);
@@ -35,6 +38,8 @@ public class Autonomous3 extends BaseAutonomous {
 
         // spin right small amount
         spinRightP(-45, 0.5);
+
+        // TODO: get rid of unused code
 
         sleep(2000);
         // detect objects
@@ -66,6 +71,7 @@ public class Autonomous3 extends BaseAutonomous {
 
             // let's instead go up to the shoot line, shoot, then continue
 
+            // TODO: more comments about what the robot does and why
             driveStraight(0.75, (3*12)-7, 20);
             spinRightP(-5, 0.25);
             shootRing();
@@ -73,10 +79,13 @@ public class Autonomous3 extends BaseAutonomous {
             spinRightP(-80, 0.25);
             robot.shooterMotor.setPower(0);
             driveStraight(0.5, 3.5*12, 20);
+            // TODO: make a robot function for releasing wobble
             robot.wobbleServo.setPosition(1.0);
             sleep(500);
             robot.setPower(-0.25,-0.5);
             sleep(2000);
+
+            // TODO: remove old code
 
             // turn backwards to park on line
             // A:  go straight ? feet
@@ -95,6 +104,8 @@ public class Autonomous3 extends BaseAutonomous {
 
             // let's instead go up to the shoot line, shoot, then continue
 
+            // TODO: more comments about what the robot does and why
+
             driveStraight(0.75, (3*12)-7, 20);
             spinRightP(-5, 0.25);
             shootRing();
@@ -105,11 +116,14 @@ public class Autonomous3 extends BaseAutonomous {
 
             spinRightP(-180, 0.75);
             // drop the wobble
+            // TODO: make a robot function for this
             robot.wobbleServo.setPosition(1.0);
             sleep(500);
 
             driveStraight(0.75, 1*12, 20.0);
 
+
+            // TODO: remove old code
 
             // B:  go straight ? feed, spin to -90, go straight ? feet, sping back to zero
 //            spinLeftP(18, 0.25);
@@ -131,6 +145,8 @@ public class Autonomous3 extends BaseAutonomous {
         }
 
         if (numRings == 4) {
+
+            // TODO: get rid of old code
             // c:  go straight, just further then A
 //            spinLeftP(5, 0.25);
 //            driveStraight(0.5, 8.4*12, 15.0);
@@ -140,6 +156,12 @@ public class Autonomous3 extends BaseAutonomous {
 //            spinRightP(0, 0.25);
 //            float inches = -4*12;
 //            encoderDrive(-.3, inches, inches, 10, false);
+
+            // TODO: more comments about what the robot does and why
+
+
+            // TODO: set a variable above to use for the shooting power
+
             robot.shooterMotor.setPower(.55);
             spinLeftP(0.0, 0.25);
             driveStraight(0.75, (3*12)-7, 20);

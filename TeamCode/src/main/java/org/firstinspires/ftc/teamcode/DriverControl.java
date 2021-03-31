@@ -1,4 +1,4 @@
-/* Copyright (c) 2017 FIRST. All rights reserved.
+ /* Copyright (c) 2017 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided that
@@ -54,6 +54,7 @@ public class DriverControl extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
 
+    // TODO: comments
     private final int GOTO_DONE = 0;
     private final int GOTO_ALIGN1 = 1;
     private final int GOTO_MOVEX = 2;
@@ -76,6 +77,7 @@ public class DriverControl extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
+        // TODO: what's this used for?
         int goToState = GOTO_DONE;
 
         // this is so that the motor will have already started up when we start the match so that
@@ -110,6 +112,7 @@ public class DriverControl extends LinearOpMode {
                 goToState = GOTO_DONE;
             }
 
+            // TODO: comment
             robotActions(robot);
 
             // initialize IMU?
@@ -136,6 +139,7 @@ public class DriverControl extends LinearOpMode {
         }
     }
 
+    // TODO: comment
     public void robotVision(Robot2020 robot) {
 
         OpenGLMatrix lastLocation = null;
@@ -294,11 +298,14 @@ public class DriverControl extends LinearOpMode {
     }
 
     public void robotActions(Robot2020 robot) {
+
+        // TODO: comment
         double shootPower = 0.0;
         if (gamepad2.a)
             shootPower = 0.5;
         robot.shooterMotor.setPower(shootPower);
 
+        // TODO: clean up old commented out code
         if (gamepad2.right_bumper) {
             // shoot the rings!
 //                robot.shootRing();
@@ -323,8 +330,8 @@ public class DriverControl extends LinearOpMode {
             //robot.pusherServo.setPosition(0.85);
         robot.retractRingPusher();
         }
-        // this lefts us aim our shooter with the up/down motion
 
+        // TODO: comment
         if(gamepad2.left_bumper){
             robot.lowerIntakeMotor.setPower(1);
             robot.upperIntakeMotor.setPower(1);
@@ -333,8 +340,11 @@ public class DriverControl extends LinearOpMode {
             robot.lowerIntakeMotor.setPower(0);
             robot.upperIntakeMotor.setPower(0);
         }
+
+        // this lefts us aim our shooter with the up/down motion
         double shooterAnglePower = 0.3 * gamepad2.left_stick_y;
         robot.shooterAngleMotor.setPower(shooterAnglePower);
+
 
         if (gamepad1.y) {
             robot.wobbleServo.setPosition(0.25);
@@ -342,6 +352,7 @@ public class DriverControl extends LinearOpMode {
             robot.wobbleServo.setPosition(0.50);
         }
 
+        // TODO: make robot functions for this
         if (gamepad2.b) {
             robot.releaseServo.setPosition(0);
         }
@@ -350,6 +361,8 @@ public class DriverControl extends LinearOpMode {
         }
 
     }
+
+    // TODO: comment for this function?
     public int goToTarget(Robot2020 robot, int state) {
 
         // how close is close enough?
@@ -430,6 +443,7 @@ public class DriverControl extends LinearOpMode {
         return state;
     }
 
+    // TODO: comment for this function
     public int countRings(Robot2020 robot) {
 
         int numRings = 0;
@@ -457,6 +471,8 @@ public class DriverControl extends LinearOpMode {
         }
         return numRings;
     }
+
+    // TODO: could we share this code from BaseAutonomous, rather then copy it?
 
     // This function is just like spinLeft, but sets the power proportional to the distance
     // from our target angle; this way we don't have to brake at the end.

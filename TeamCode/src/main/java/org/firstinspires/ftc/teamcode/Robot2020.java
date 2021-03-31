@@ -200,6 +200,7 @@ public class Robot2020
         initTfod(ahwMap);
     }
 
+    // TODO: comment
     public void initIMU() {
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
@@ -219,6 +220,8 @@ public class Robot2020
         imu = hwMap.get(BNO055IMU.class, "imu 1");
         imu.initialize(parameters);
     }
+
+    // TODO: comment
     public void initWebcam(HardwareMap ahwMap){
         /*
          * Retrieve the camera we are to use.
@@ -362,6 +365,7 @@ public class Robot2020
         targetsUltimateGoal.activate();
     }
 
+    // TODO: comment
     private void initTfod(HardwareMap ahwMap) {
         int tfodMonitorViewId = ahwMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", ahwMap.appContext.getPackageName());
@@ -456,6 +460,7 @@ public class Robot2020
         setPower(0);
     }
 
+    // TODO: comment
     public RobotLocation getRobotLocation() {
         OpenGLMatrix lastLocation = getLastLocation();
         RobotLocation loc = new RobotLocation();
@@ -473,6 +478,7 @@ public class Robot2020
         return loc;
     }
 
+    // TODO: comment
     public OpenGLMatrix getLastLocation() {
         OpenGLMatrix lastLocation = null;
         //float mmPerInch        = 25.4f;
