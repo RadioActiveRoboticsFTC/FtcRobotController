@@ -509,6 +509,18 @@ public class Robot2020
 //        sleep(500);
         pusherServo.setPosition(0);
     }
+    public void raiseRingWall(){
+        wallServo.setPosition(0.15);
+    }
+    public void lowerRingWall(){
+        wallServo.setPosition(0.0);
+    }
+    public void pushRingPusher(){
+        pusherServo.setPosition(0.55);
+    }
+    public void retractRingPusher(){
+        pusherServo.setPosition(0.85);
+    }
 }
 
 

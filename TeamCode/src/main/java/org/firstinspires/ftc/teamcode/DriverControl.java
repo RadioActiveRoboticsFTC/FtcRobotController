@@ -304,17 +304,24 @@ public class DriverControl extends LinearOpMode {
 //                robot.shootRing();
 
 //                robot.wallServo.setPosition(0.5);
-            robot.wallServo.setPosition(0.15);
+            //robot.wallServo.setPosition(0.15);
+           robot.raiseRingWall();
             sleep(500);
 //        wait(500);
-            robot.pusherServo.setPosition(0.55  );
+
+            //robot.pusherServo.setPosition(0.55  );
+        robot.pushRingPusher();
         } else {
+
             // put shooter stuff back in oringinal position
 //                robot.resetShooter();
-            robot.wallServo.setPosition(0.0);
+            //
+            // robot.wallServo.setPosition(0.0);
+            robot.lowerRingWall();
             sleep(500);
 //        wait(500);
-            robot.pusherServo.setPosition(0.85);
+            //robot.pusherServo.setPosition(0.85);
+        robot.retractRingPusher();
         }
         // this lefts us aim our shooter with the up/down motion
 
