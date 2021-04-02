@@ -94,14 +94,6 @@ public class BaseAutonomous extends LinearOpMode {
                           robot.rightDrive.getCurrentPosition());
         telemetry.update();
 
-        // open servo
-        // TODO: use a robot function for this
-        robot.wobbleServo.setPosition(1.0);
-
-        sleep(1000);
-//        robot.wobbleServo.setPosition(.2);
-        robot.wobbleServo.setPosition(0);
-        // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
         // Call the function that child classes will override in order
