@@ -12,7 +12,7 @@ import java.util.List;
 // put robot directly over left red line, with back to wall
 
 @Autonomous(name="Autonomous3")
-public class Autonomous3 extends BaseAutonomous {
+public class RemoteAutonomous extends BaseAutonomous {
 
 
     // The BaseAutonomous class will have it's runOpsMode function called.  It will set up
