@@ -43,10 +43,10 @@ public class Autonomous3 extends BaseAutonomous {
 
         sleep(2000);
         // detect objects
-        int numRings = 0;
+        int numRings = 4;
 //       while (opModeIsActive() {
-        numRings = countRings(robot);
-        //sleep(500);
+        //numRings = countRings(robot);
+        //sleep(5000);
         //int numRings2 = countRings(robot);
 //        }
         telemetry.addData("num rings", numRings);
@@ -60,11 +60,12 @@ public class Autonomous3 extends BaseAutonomous {
 //        // go straight until we are aligned with A & B
 //        driveStraight(0.5, 2*12.0 + 0.0, 15.0);
 
-
+        //varible for shooting power
+        double shootingPower = 0.50; //.55 was dramatically overshooting .5 barely undershooting
         // 3 possible paths:
 
         if (numRings == 0) {
-            robot.shooterMotor.setPower(0.55);
+            robot.shooterMotor.setPower(shootingPower);
             // don't got straight so we are in the middle of target B
             spinLeftP(5.0, 0.25);
 //            driveStraight(0.8, 5.5*12 , 20.0);
@@ -74,6 +75,8 @@ public class Autonomous3 extends BaseAutonomous {
             // TODO: more comments about what the robot does and why
             driveStraight(0.75, (3*12)-7, 20);
             spinRightP(-5, 0.25);
+            shootRing();
+            sleep(1000);
             shootRing();
             driveStraight(0.75, 7, 20);
             spinRightP(-80, 0.25);
@@ -97,7 +100,7 @@ public class Autonomous3 extends BaseAutonomous {
         }
 
         if (numRings == 1) {
-            robot.shooterMotor.setPower(0.55);
+            robot.shooterMotor.setPower(shootingPower);
             // don't got straight so we are in the middle of target B
             spinLeftP(5.0, 0.25);
 //            driveStraight(0.8, 5.5*12 , 20.0);
@@ -108,6 +111,8 @@ public class Autonomous3 extends BaseAutonomous {
 
             driveStraight(0.75, (3*12)-7, 20);
             spinRightP(-5, 0.25);
+            shootRing();
+            sleep(1000);
             shootRing();
             driveStraight(0.75, 7, 20);
             spinLeftP(5.0, 0.25);
@@ -162,17 +167,19 @@ public class Autonomous3 extends BaseAutonomous {
 
             // TODO: set a variable above to use for the shooting power
 
-            robot.shooterMotor.setPower(.55);
+            robot.shooterMotor.setPower(shootingPower);
             spinLeftP(0.0, 0.25);
             driveStraight(0.75, (3*12)-7, 20);
             spinRightP(-5, 0.25);
             shootRing();
+            sleep(1000);
+            shootRing();
             spinLeftP(0.0, 0.25);
             robot.shooterMotor.setPower(0.0);
-            driveStraight(0.8, (7.5*12)-(3*12)+5, 20.0);
-            spinRightP(-80, 0.75);
-            driveStraight(0.75, 1.75*12, 20.0);
-            spinRightP(-180, 0.75);
+            driveStraight(1, (7.5*12)-(3*12)+5, 20.0);
+            spinRightP(-70, 1);
+            driveStraight(1, 1.75*12, 20.0);
+            spinRightP(-180, 1);
 
             // drop the wobble
             robot.wobbleServo.setPosition(1.0);
