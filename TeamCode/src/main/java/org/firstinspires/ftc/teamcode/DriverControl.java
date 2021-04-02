@@ -331,7 +331,8 @@ public class DriverControl extends LinearOpMode {
         robot.retractRingPusher();
         }
 
-        // TODO: comment
+        // obtaining rings!
+        // turns on the intake motors
         if(gamepad2.left_bumper){
             robot.lowerIntakeMotor.setPower(1);
             robot.upperIntakeMotor.setPower(1);
@@ -341,6 +342,16 @@ public class DriverControl extends LinearOpMode {
             robot.upperIntakeMotor.setPower(0);
         }
 
+        // reverse intake motors to prevent catastrophic event with rings.
+        // so we can spit out rings that are stuck.
+        if(gamepad2.y){
+            robot.lowerIntakeMotor.setPower(-1);
+            robot.upperIntakeMotor.setPower(-1);
+        }
+//        else{
+//            robot.lowerIntakeMotor.setPower(0);
+//            robot.upperIntakeMotor.setPower(0);
+//        }
         // this lefts us aim our shooter with the up/down motion
         double shooterAnglePower = 0.3 * gamepad2.left_stick_y;
         robot.shooterAngleMotor.setPower(shooterAnglePower);
