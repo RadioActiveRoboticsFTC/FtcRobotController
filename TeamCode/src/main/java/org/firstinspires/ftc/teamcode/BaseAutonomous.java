@@ -102,27 +102,21 @@ public class BaseAutonomous extends LinearOpMode {
 
     }
 
-    // TODO: comment
+    // shoots the ring by moving the wall and the flicker
     public void shootRing() {
 
-        // TODO: remove old code
 
             // shoot the rings!
-//            robot.wallServo.setPosition(0.15);
             robot.raiseRingWall();
             sleep(500);
-//            robot.pusherServo.setPosition(0.55  );
             robot.pushRingPusher();
 
             sleep(1000);
 
             // put shooter stuff back in oringinal position
-
-//            robot.wallServo.setPosition(0.0);
             robot.lowerRingWall();
             sleep(500);
             robot.retractRingPusher();
-//            robot.pusherServo.setPosition(0.85);
 
     }
     // drive straight a certain distance using encoders and IMU
@@ -413,7 +407,7 @@ public class BaseAutonomous extends LinearOpMode {
         }
     }
 
-    // TODO: comment
+    // uses the web cam to detect the amount of rings
     public int countRings(Robot2020 robot) {
 
         int numRings = 0;

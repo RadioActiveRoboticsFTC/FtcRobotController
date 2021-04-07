@@ -54,7 +54,8 @@ public class DriverControl extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
 
-    // TODO: comments
+    // we currently aren't using this; the idea was for automated navigation
+    // with the images
     private final int GOTO_DONE = 0;
     private final int GOTO_ALIGN1 = 1;
     private final int GOTO_MOVEX = 2;
@@ -77,7 +78,8 @@ public class DriverControl extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
-        // TODO: what's this used for?
+        // we aren't using this right now;
+        // for the image navigation
         int goToState = GOTO_DONE;
 
         // this is so that the motor will have already started up when we start the match so that
@@ -112,7 +114,8 @@ public class DriverControl extends LinearOpMode {
                 goToState = GOTO_DONE;
             }
 
-            // TODO: comment
+            // this handles everything except the motion, things like:
+            // shooting, intake motors, etc.
             robotActions(robot);
 
             // initialize IMU?
@@ -139,7 +142,8 @@ public class DriverControl extends LinearOpMode {
         }
     }
 
-    // TODO: comment
+    // we aren't currently aren't using this, but this uses the images
+    // for automatic navigation
     public void robotVision(Robot2020 robot) {
 
         OpenGLMatrix lastLocation = null;
@@ -299,7 +303,7 @@ public class DriverControl extends LinearOpMode {
 
     public void robotActions(Robot2020 robot) {
 
-        // TODO: comment
+        // the a button turns on the shooting motor, if pressed
         double shootPower = 0.0;
         if (gamepad2.a)
             shootPower = 0.5;
@@ -308,27 +312,14 @@ public class DriverControl extends LinearOpMode {
         // TODO: clean up old commented out code
         if (gamepad2.right_bumper) {
             // shoot the rings!
-//                robot.shootRing();
-
-//                robot.wallServo.setPosition(0.5);
-            //robot.wallServo.setPosition(0.15);
-           robot.raiseRingWall();
+            robot.raiseRingWall();
             sleep(500);
-//        wait(500);
-
-            //robot.pusherServo.setPosition(0.55  );
-        robot.pushRingPusher();
+            robot.pushRingPusher();
         } else {
-
             // put shooter stuff back in oringinal position
-//                robot.resetShooter();
-            //
-            // robot.wallServo.setPosition(0.0);
             robot.lowerRingWall();
             sleep(500);
-//        wait(500);
-            //robot.pusherServo.setPosition(0.85);
-        robot.retractRingPusher();
+            robot.retractRingPusher();
         }
 
         // obtaining rings!
@@ -348,14 +339,10 @@ public class DriverControl extends LinearOpMode {
             robot.lowerIntakeMotor.setPower(-1);
             robot.upperIntakeMotor.setPower(-1);
         }
-//        else{
-//            robot.lowerIntakeMotor.setPower(0);
-//            robot.upperIntakeMotor.setPower(0);
-//        }
+
         // this lefts us aim our shooter with the up/down motion
         double shooterAnglePower = 0.3 * gamepad2.left_stick_y;
         robot.shooterAngleMotor.setPower(shooterAnglePower);
-
 
         if (gamepad1.y) {
             robot.wobbleServo.setPosition(0.25);
@@ -363,12 +350,14 @@ public class DriverControl extends LinearOpMode {
             robot.wobbleServo.setPosition(0.50);
         }
 
-        // TODO: make robot functions for this
+        // button b lowers the intake
         if (gamepad2.b) {
-            robot.releaseServo.setPosition(0);
+            // raise release arm to lower the intake
+            robot.raiseReleaseLatch();
         }
         else{
-            robot.releaseServo.setPosition(0.25);
+            // push release arm down
+            robot.lowerReleaseLatch();
         }
 
     }
@@ -454,7 +443,7 @@ public class DriverControl extends LinearOpMode {
         return state;
     }
 
-    // TODO: comment for this function
+    // uses the web cam to count rings; returns the number of rings it sees
     public int countRings(Robot2020 robot) {
 
         int numRings = 0;

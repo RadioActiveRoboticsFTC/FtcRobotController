@@ -200,7 +200,8 @@ public class Robot2020
         initTfod(ahwMap);
     }
 
-    // TODO: comment
+    // initializes the IMU.  This helps us with shooting, so iut needs to be
+    // a function to call after autonomous, when we go up against the wall
     public void initIMU() {
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
@@ -221,7 +222,7 @@ public class Robot2020
         imu.initialize(parameters);
     }
 
-    // TODO: comment
+    // initialize the webcam which we use for detecting rings in autonomous
     public void initWebcam(HardwareMap ahwMap){
         /*
          * Retrieve the camera we are to use.
@@ -365,7 +366,8 @@ public class Robot2020
         targetsUltimateGoal.activate();
     }
 
-    // TODO: comment
+    // tfod == Tensor Flow Object Detection.
+    // We use this for detecting the rings
     private void initTfod(HardwareMap ahwMap) {
         int tfodMonitorViewId = ahwMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", ahwMap.appContext.getPackageName());
@@ -460,7 +462,7 @@ public class Robot2020
         setPower(0);
     }
 
-    // TODO: comment
+    // we are not currently using this function for returning where we are based off images
     public RobotLocation getRobotLocation() {
         OpenGLMatrix lastLocation = getLastLocation();
         RobotLocation loc = new RobotLocation();
@@ -478,7 +480,7 @@ public class Robot2020
         return loc;
     }
 
-    // TODO: comment
+    // we are not currently using this
     public OpenGLMatrix getLastLocation() {
         OpenGLMatrix lastLocation = null;
         //float mmPerInch        = 25.4f;
@@ -527,6 +529,10 @@ public class Robot2020
     public void retractRingPusher(){
         pusherServo.setPosition(0.85);
     }
+    public void raiseReleaseLatch() { releaseServo.setPosition(0); }
+    public void lowerReleaseLatch() { releaseServo.setPosition(0.25); }
+    public void dropWobble() {wobbleServo.setPosition(1.0);}
+
 }
 
 
