@@ -25,6 +25,9 @@ public class RemoteAutonomous extends BaseAutonomous {
 
         float ts = (float) 15.0;
 
+        // hold on to the wobble
+        robot.graspWobble();
+
         // drive forward
         driveStraight(0.25, 1*12.0 + 10.0, 15.0);
 
@@ -34,7 +37,7 @@ public class RemoteAutonomous extends BaseAutonomous {
         sleep(2000);
 
         // detect objects
-        int numRings = 4;
+        int numRings = countRings(robot);
 
         telemetry.addData("num rings", numRings);
         telemetry.update();
