@@ -51,6 +51,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
 @TeleOp(name="Working Remote Control", group="Linear Opmode")
 public class DriverControl extends LinearOpMode {
 
+    private double shootPower=0.0;
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -303,13 +304,53 @@ public class DriverControl extends LinearOpMode {
 
     public void robotActions(Robot2020 robot) {
 
-        // the a button turns on the shooting motor, if pressed
-        double shootPower = 0.0;
-        if (gamepad2.a)
-            shootPower = 0.5;
-        robot.shooterMotor.setPower(shootPower);
 
-        // TODO: clean up old commented out code
+        // the left trigger on gamepad 2 determines what the
+        // a, b, y, x buttons are used for
+        if (gamepad2.left_trigger > .7) {
+
+            // if left trigger is down, use the buttons for setting the shoot power
+
+            if (gamepad2.a)
+                shootPower = 0.47;
+
+            if (gamepad2.y)
+                shootPower = 0.55;
+
+            if (gamepad2.x)
+                shootPower = 0.5;
+
+            if (gamepad2.b)
+                shootPower = 0.45;
+
+         } else {
+
+            // other wise, a, b, x, y buttons are for other things.
+
+            // like starting up the shooting motor
+            if (gamepad2.a) {
+
+                robot.shooterMotor.setPower(shootPower);
+                telemetry.addData("shootPower", shootPower);
+
+            } else {
+                robot.shooterMotor.setPower(0.0);
+            }
+            // button b lowers the intake
+            if (gamepad2.b) {
+                // raise release arm to lower the intake
+                robot.raiseReleaseLatch();
+            } else {
+                // push release arm down
+                robot.lowerReleaseLatch();
+            }
+            // reverse intake motors to prevent catastrophic event with rings.
+            // so we can spit out rings that are stuck.
+            if (gamepad2.y) {
+                robot.lowerIntakeMotor.setPower(-1);
+                robot.upperIntakeMotor.setPower(-1);
+            }
+        }
         if (gamepad2.right_bumper) {
             // shoot the rings!
             robot.raiseRingWall();
@@ -333,12 +374,6 @@ public class DriverControl extends LinearOpMode {
             robot.upperIntakeMotor.setPower(0);
         }
 
-        // reverse intake motors to prevent catastrophic event with rings.
-        // so we can spit out rings that are stuck.
-        if(gamepad2.y){
-            robot.lowerIntakeMotor.setPower(-1);
-            robot.upperIntakeMotor.setPower(-1);
-        }
 
         // this lefts us aim our shooter with the up/down motion
         double shooterAnglePower = 0.3 * gamepad2.left_stick_y;
@@ -350,15 +385,7 @@ public class DriverControl extends LinearOpMode {
             robot.wobbleServo.setPosition(0.50);
         }
 
-        // button b lowers the intake
-        if (gamepad2.b) {
-            // raise release arm to lower the intake
-            robot.raiseReleaseLatch();
-        }
-        else{
-            // push release arm down
-            robot.lowerReleaseLatch();
-        }
+
 
     }
 
