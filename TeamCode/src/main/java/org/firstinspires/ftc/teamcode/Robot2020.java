@@ -518,7 +518,7 @@ public class Robot2020
         pusherServo.setPosition(0);
     }
     public void raiseRingWall(){
-        wallServo.setPosition(0.15);
+        wallServo.setPosition(0.17);
     }
     public void lowerRingWall(){
         wallServo.setPosition(0.0);
@@ -530,8 +530,9 @@ public class Robot2020
         pusherServo.setPosition(0.85);
     }
     public void raiseReleaseLatch() { releaseServo.setPosition(0); }
-    public void lowerReleaseLatch() { releaseServo.setPosition(0.25); }
+    public void lowerReleaseLatch() { releaseServo.setPosition(0.50); }
     public void dropWobble() {wobbleServo.setPosition(1.0);}
+    public void graspWobble() {wobbleServo.setPosition(0.0);}
 
 }
 
