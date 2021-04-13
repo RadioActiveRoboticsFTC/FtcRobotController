@@ -29,7 +29,7 @@ public class RemoteAutonomous extends BaseAutonomous {
         robot.graspWobble();
 
         // drive forward
-        driveStraight(0.25, 1*12.0 + 10.0, 15.0);
+        driveStraight(0.50, 1*12.0 + 10.0, 15.0);
 
         // spin right small amount
         spinRightP(-45, 0.5);
@@ -49,56 +49,60 @@ public class RemoteAutonomous extends BaseAutonomous {
         if (numRings == 0) {
             robot.shooterMotor.setPower(shootingPower);
             // don't got straight so we are in the middle of target B
-            spinLeftP(5.0, 0.25);
+            spinLeftP(5.0, 0.45);
 //            driveStraight(0.8, 5.5*12 , 20.0);
 
             // let's instead go up to the shoot line, shoot, then continue
             driveStraight(0.75, (3*12)-7, 20);
-            spinRightP(-5, 0.25);
+            spinRightP(-5, 0.45);
             shootRing();
-            sleep(1000);
+            sleep(500);
+            shootRing();
+            sleep(500);
             shootRing();
 
             // go to zone A to drop the wobble
             driveStraight(0.75, 7, 20);
-            spinRightP(-80, 0.25);
+            spinRightP(-80, 0.45);
             robot.shooterMotor.setPower(0);
-            driveStraight(0.5, 3.5*12, 20);
+            driveStraight(0.75, 3.25*12, 20);
             robot.dropWobble();
-            sleep(500);
+            sleep(200);
 
             // go park robot over parking line
-            robot.setPower(-0.25,-0.5);
-            sleep(2000);
+            robot.setPower(-0.45,-0.75);
+            sleep(1000);
 
         }
 
         if (numRings == 1) {
             robot.shooterMotor.setPower(shootingPower);
             // don't got straight so we are in the middle of target B
-            spinLeftP(5.0, 0.25);
+            spinLeftP(5.0, 0.45);
 //            driveStraight(0.8, 5.5*12 , 20.0);
 
             // let's instead go up to the shoot line, shoot, then continue
             driveStraight(0.75, (3*12)-7, 20);
-            spinRightP(-5, 0.25);
+            spinRightP(-5, 0.45);
             shootRing();
-            sleep(1000);
+            sleep(500);
+            shootRing();
+            sleep(500);
             shootRing();
 
             // got to zone B to drop wobble
             driveStraight(0.75, 7, 20);
-            spinLeftP(5.0, 0.25);
+            spinLeftP(5.0, 0.45);
             robot.shooterMotor.setPower(0);
             driveStraight(0.75, 2.5*12, 20.0);
-            spinRightP(-180, 0.75);
+            spinRightP(-180, 1.0);
             // drop the wobble
             robot.dropWobble();
             sleep(500);
 
             // park!
-            driveStraight(0.75, 1*12, 20.0);
-
+            driveStraight(1.0, 14, 20.0);
+            spinRightP(0, 1.0);
         }
 
         if (numRings == 4) {
