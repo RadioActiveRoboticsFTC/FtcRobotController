@@ -123,8 +123,10 @@ public class DriverControl extends LinearOpMode {
             curIMUBtnState = gamepad2.x;
             // init IMU just once for every time x btn is pressed
             if ((curIMUBtnState) && (curIMUBtnState != prevIMUBtnState)) {
-                telemetry.addData("Initing IMU ...", "");
-                robot.initIMU();
+                if (gamepad2.left_trigger < .7) {
+                    telemetry.addData("Initing IMU ...", "");
+                    robot.initIMU();
+                }
             }
             prevIMUBtnState = curIMUBtnState;
 
@@ -312,16 +314,16 @@ public class DriverControl extends LinearOpMode {
             // if left trigger is down, use the buttons for setting the shoot power
 
             if (gamepad2.a)
-                shootPower = 0.47;
+                shootPower = 0.45;
 
             if (gamepad2.y)
-                shootPower = 0.55;
-
-            if (gamepad2.x)
                 shootPower = 0.5;
 
+            if (gamepad2.x)
+                shootPower = 0.55;
+
             if (gamepad2.b)
-                shootPower = 0.45;
+                shootPower = 0.47;
 
          } else {
 
